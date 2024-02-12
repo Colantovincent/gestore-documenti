@@ -1,13 +1,17 @@
 "use server"
 import { join } from "path";
 import { writeFile, mkdir, readdir } from "fs";
-import { request } from "http";
+//variabile globale per mantenere il valore del path in cui salvare il file
+let folder = "";
+export async function handleSelection(folderName) {
+    folder = folderName;
+    return {success: true};
+}
 export async function handleUpload(data) {
     //un array per contenere i MIME types permessi (.txt, .pdf, .doc, .docx, .epub e .odt)
     const permittedTypes = ["text/plain", "application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/epub+zip", "application/vnd.oasis.opendocument.text"];
     let isPermitted = false;
     const file = data.get("documento");
-    const folder = data.get("cartella");
     for (let type of permittedTypes) {
         if (type === file.type) {
             isPermitted = true;
@@ -17,7 +21,7 @@ export async function handleUpload(data) {
     //Uscita precoce dalla funzione in caso il file non sia di tipo permesso
     if (!isPermitted) {
         console.error("Il client ha inviato un file di tipo non consentito");
-        return;
+        return {success: false, problem: "Il client ha inviato un file di tipo non consentito"};
     }
     //trasforma il file in buffer per mantenere la formattazione corretta all'upload
     const bits = await file.arrayBuffer();
@@ -32,9 +36,9 @@ export async function handleUpload(data) {
             });
     } catch (err) {
         console.error("Errore: ", err);
-        return;
+        return{success: false, error: "Non è stato possibile caricare il file sul server"};
     }
-    return;
+    return {success: true};
 }
 export async function handleCreation(data) {
     const cartella = data.get("folderName");

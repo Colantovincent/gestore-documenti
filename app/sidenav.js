@@ -1,4 +1,3 @@
-
 import { getFolders } from "./actions";
 import Folder from "./folder";
 export default async function SideNav() {
@@ -7,7 +6,7 @@ export default async function SideNav() {
     folderStructure.sort();
     return (
         <>
-            <ul>                   
+            <ul>
                 {//Popolazione della lista
                 folderStructure.map(el => {
                     return (<li key={el}><Folder name={el}/></li>)
