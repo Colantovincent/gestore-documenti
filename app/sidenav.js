@@ -6,7 +6,7 @@ export default async function SideNav() {
     folderStructure.sort();
     return (
         <>
-            <ul>
+            <ul className="mx-3">
                 {//Popolazione della lista
                 folderStructure.map(el => {
                     return (<li key={el}><Folder name={el}/></li>)

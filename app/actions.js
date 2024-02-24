@@ -1,6 +1,6 @@
 "use server"
 import { join } from "path";
-import { writeFile, mkdir, readdir } from "fs";
+import { writeFile, mkdir, readdirSync } from "fs";
 //variabile globale per mantenere il valore del path in cui salvare il file
 let folder = "";
 export async function handleSelection(folderName) {
@@ -44,23 +44,21 @@ export async function handleCreation(data) {
     const cartella = data.get("folderName");
     if (cartella === "") {
         console.error("Errore: il client ha inviato il form con cartella vuota");
-        return;
+        return {success: false};
+    }
+    let isAlreadyCreated = false;
+    //controlla che la cartella non sia già esistente nel server
+    const dirs = readdirSync("savedFiles");
+    dirs.forEach(dir => dir === cartella ? isAlreadyCreated = true : null);
+    if (isAlreadyCreated) {
+        return {success: false};
     }
     const path = join("savedFiles/", cartella);
     mkdir(path, (err) => { err ? console.error("Errore: " + err) : console.log("Cartella creata")});
-    return;
+    return {success: true};
 }
 export async function getFolders() {
-    let arr = [];
     //runna un fs.readdir ricorsivo e mette i nomi delle cartelle in un array da returnare al client
-    readdir("savedFiles",
-        {recursive: true},
-        (err, files) => {
-            if (err)
-                console.error("Errore: " + err);
-            files.forEach((el) => {
-                arr.push(el);
-            });
-    });
+    let arr = readdirSync("savedFiles", {recursive: true});
     return {folderStructure: arr};
 }

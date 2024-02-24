@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "autoprefixer": "^10.4.17",
+    "feather-icons": "^4.29.1",
     "file-saver": "^2.0.5",
     "next": "14.1.0",
     "postcss": "^8.4.33",
